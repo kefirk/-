@@ -88,6 +88,9 @@ attack_ani_L = [pygame.image.load("Player_Sprite_L.png"), pygame.image.load("Pla
 health_ani = [pygame.image.load("heart0.png").convert_alpha(), pygame.image.load("heart.png").convert_alpha(),
               pygame.image.load("heart2.png").convert_alpha(), pygame.image.load("heart3.png").convert_alpha(),
               pygame.image.load("heart4.png").convert_alpha(), pygame.image.load("heart5.png").convert_alpha()]
+
+
+
  
  
 class Background(pygame.sprite.Sprite):
@@ -341,6 +344,8 @@ class Player(pygame.sprite.Sprite):
                 mmanager.stop()
                 mmanager.playsoundtrack(soundtrack[2], -1, 0.1)
                 pygame.display.update()
+
+    
  
  
 class Bolt(pygame.sprite.Sprite):
@@ -382,68 +387,92 @@ class Bolt(pygame.sprite.Sprite):
 
 
 class Enemy3(pygame.sprite.Sprite):
-    def __init__(self):
+      def __init__(self):
         super().__init__()
         self.image = pygame.image.load("Enemy3.png").convert_alpha()
-        self.rect = self.image.get_rect()
-        self.pos = vec(0, 0)
-        self.vel = vec(0, 0)
-
-        self.direction = random.randint(0, 1)  # 0 for Right, 1 for Left
-        self.vel.x = random.randint(2, 6) / 2  # Randomized velocity of the generated enemy
-        self.mana = random.randint(1, 3)  # Randomized mana amount obtained upon
-        self.jumping = False  # Добавьте атрибут jumping и установите его в False
-        self.gravity = 0.5  # Установите гравитацию (можете настроить под свои потребности)
-
-        # Sets the initial position of the enemy
+        self.rect = self.image.get_rect()     
+        self.pos = vec(0,0)
+        self.vel = vec(0,0)
+        self.health = 1
+ 
+        self.direction = random.randint(0,1) # 0 for Right, 1 for Left
+        self.vel.x = random.randint(6,12) / 2  # Randomised velocity of the generated enemy
+        self.mana = random.randint(1, 3)  # Randomised mana amount obtained upon    
+ 
+        # Sets the intial position of the enemy
         if self.direction == 0:
             self.pos.x = 0
             self.pos.y = 235
         if self.direction == 1:
             self.pos.x = 700
             self.pos.y = 235
+ 
+ 
+      def move(self):
+        if cursor.wait == 1: return
+         
+        # Causes the enemy to change directions upon reaching the end of screen    
+        if self.pos.x >= (WIDTH-20):
+              self.direction = 1
+        elif self.pos.x <= 0:
+              self.direction = 0
+ 
+        # Updates positon with new values     
+        if self.direction == 0:
+            self.pos.x += self.vel.x
+        if self.direction == 1:
+            self.pos.x -= self.vel.x
+             
+        self.rect.topleft = self.pos # Updates rect
+                
+      def update(self):
+            # Checks for collision with the Player
+            hits = pygame.sprite.spritecollide(self, Playergroup, False)
+ 
+            # Checks for collision with Fireballs
+            f_hits = pygame.sprite.spritecollide(self, Fireballs, False)
+            
+ 
+            # Activates upon either of the two expressions being true
+            if self.health <0:
+                  self.kill()
+                  mmanager.playsound(hit, 0.05)
+                  handler.dead_enemy_count += 1
+                   
+                  if player.mana < 100: player.mana += self.mana # Release mana
+                  player.experiance += 1   # Release expeiriance
+                   
+                  rand_num = numpy.random.uniform(0, 100)
+                  item_no = 0
+                  if rand_num >= 0 and rand_num <= 5:  # 1 / 20 chance for an item (health) drop
+                        item_no = 1
+                  elif rand_num > 5 and rand_num <= 15:
+                        item_no = 2
+ 
+                  if item_no != 0:
+                        # Add Item to Items group
+                        item = Item(item_no)
+                        Items.add(item)
+                        # Sets the item location to the location of the killed enemy
+                        item.posx = self.pos.x
+                        item.posy = self.pos.y
+                  
+            # If collision has occured and player not attacking, call the "hit" func.            
+            elif hits and player.attacking == False:
+                  player.player_hit()
 
-    def move(self):
-        if cursor.wait == 1:
-            return
+      def hit(self):
+        if self.health > 0:
+            self.health -= 1
         else:
-            # Causes the enemy to change directions upon reaching the end of the screen
-            if self.pos.x >= (WIDTH - 20):
-                self.direction = 1
-            elif self.pos.x <= 0:
-                self.direction = 0
-
-            # Updates position with new values
-            if self.direction == 0:
-                self.pos.x += self.vel.x
-            if self.direction == 1:
-                self.pos.x -= self.vel.x
-
-            self.rect.topleft = self.pos  # Updates rect
-
-    def jump(self):
-        self.rect.y += 1
-
-        # Check to see if the enemy is in contact with the ground
-        hits = pygame.sprite.spritecollide(self, ground_group, False)
-
-        self.rect.y -= 1
-
-        # If touching the ground and not currently jumping, cause the enemy to jump.
-        if hits and not self.jumping:
-            self.jumping = True
-            self.vel.y = -10  # Установите начальную скорость прыжка (можете настроить под свои потребности)
-
-    def update(self):
-      hits = pygame.sprite.spritecollide(self, ground_group, False)
+            self.visible = False
       
-      if hits and player.attacking == True:
-            self.jump()
-
+                   
       def render(self):
             # Displayed the enemy on screen
             displaysurface.blit(self.image, self.rect)
- 
+
+
  
 class Enemy2(pygame.sprite.Sprite):
       def __init__(self):

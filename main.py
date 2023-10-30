@@ -340,6 +340,7 @@ class Player(pygame.sprite.Sprite):
             health.image = health_ani[self.health]
              
             if self.health <= 0:
+            
                 self.kill()
                 mmanager.stop()
                 mmanager.playsoundtrack(soundtrack[2], -1, 0.1)
@@ -393,7 +394,6 @@ class Enemy3(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()     
         self.pos = vec(0,0)
         self.vel = vec(0,0)
-        self.health = 1
  
         self.direction = random.randint(0,1) # 0 for Right, 1 for Left
         self.vel.x = random.randint(6,12) / 2  # Randomised velocity of the generated enemy
@@ -431,10 +431,9 @@ class Enemy3(pygame.sprite.Sprite):
  
             # Checks for collision with Fireballs
             f_hits = pygame.sprite.spritecollide(self, Fireballs, False)
-            
  
             # Activates upon either of the two expressions being true
-            if self.health <0:
+            if hits and player.attacking == True or f_hits:
                   self.kill()
                   mmanager.playsound(hit, 0.05)
                   handler.dead_enemy_count += 1
@@ -460,18 +459,11 @@ class Enemy3(pygame.sprite.Sprite):
             # If collision has occured and player not attacking, call the "hit" func.            
             elif hits and player.attacking == False:
                   player.player_hit()
-
-      def hit(self):
-        if self.health > 0:
-            self.health -= 1
-        else:
-            self.visible = False
-      
                    
       def render(self):
             # Displayed the enemy on screen
             displaysurface.blit(self.image, self.rect)
-
+      
 
  
 class Enemy2(pygame.sprite.Sprite):

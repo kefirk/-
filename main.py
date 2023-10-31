@@ -155,7 +155,7 @@ class FireBall(pygame.sprite.Sprite):
                   self.image = pygame.image.load("fireball1_L.png") .convert_alpha()          
             self.rect = self.image.get_rect(center = player.pos)
             self.rect.x = player.pos.x
-            self.rect.y = player.pos.y - 40
+            self.rect.y = player.pos.y
              
       def fire(self):
             player.magic_cooldown = 0
@@ -202,11 +202,14 @@ class Player(pygame.sprite.Sprite):
         self.cooldown = False
         self.immune = False
         self.special = False
-        self.experiance = 0
+        self.experiance = 10
         self.attack_frame = 0
-        self.health = 5
+        self.health = 1
         self.magic_cooldown = 1
-        self.mana = 0
+        self.mana = 6
+        self.strenght = 0
+        self.agility = 0
+        self.intellect = 0
  
         # Sound
         self.slash = 0
@@ -304,7 +307,7 @@ class Player(pygame.sprite.Sprite):
                  self.image = attack_ani_R[self.attack_frame]
           elif self.direction == "LEFT":
                  self.correction()
-                 self.image = attack_ani_L[self.attack_frame]
+                 self.image = attack_ani_L[self.attack_frame] 
  
           # Update the current attack frame  
           self.attack_frame += 1
@@ -346,8 +349,12 @@ class Player(pygame.sprite.Sprite):
                 mmanager.playsoundtrack(soundtrack[2], -1, 0.1)
                 pygame.display.update()
 
-    
- 
+    def Strenght(self):
+            player.experiance = player.experiance - 10
+            self.strenght = self.strenght + 1
+            self.health = self.health+ 1
+       
+
  
 class Bolt(pygame.sprite.Sprite):
       def __init__(self, x, y, d):
@@ -463,7 +470,7 @@ class Enemy3(pygame.sprite.Sprite):
       def render(self):
             # Displayed the enemy on screen
             displaysurface.blit(self.image, self.rect)
-      
+ 
 
  
 class Enemy2(pygame.sprite.Sprite):
@@ -731,7 +738,26 @@ class EventHandler():
             button3.place(x = 40, y = 115)
              
             self.root.mainloop()
-       
+
+      def Menyushka(self):
+            # Code for the Tkinter stage selection window
+            self.root = Tk()
+            self.root.geometry('200x170')
+             
+            button1 = Button(self.root, text = "Strenght", width = 18, height = 2,
+                            command = self.Strenght)
+            button2 = Button(self.root, text = "Agility", width = 18, height = 2,
+                            command = self.world2)
+            button3 = Button(self.root, text = "Intellect", width = 18, height = 2,
+                            command = self.world3)
+              
+            button1.place(x = 40, y = 15)
+            button2.place(x = 40, y = 65)
+            button3.place(x = 40, y = 115)
+             
+            self.root.mainloop()
+
+      
       def world1(self):
             self.root.destroy()
             pygame.time.set_timer(self.enemy_generation, 2000)
@@ -815,7 +841,7 @@ class EventHandler():
 class HealthBar(pygame.sprite.Sprite):
       def __init__(self):
             super().__init__()
-            self.image = pygame.image.load("heart5.png").convert_alpha()
+            self.image = pygame.image.load("heart.png").convert_alpha()
  
       def render(self):
             displaysurface.blit(self.image, (10,10))
@@ -1008,8 +1034,9 @@ while 1:
                 if player.attacking == False:
                     player.attack()
                     player.attacking = True     
- 
- 
+            if event.key == pygame.K_e:
+                  handler.Menyushka()
+  
     # Player related functions
     player.update()
     if player.attacking == True:
@@ -1052,6 +1079,5 @@ while 1:
           entity.update()
           entity.move()
           entity.render()
- 
     pygame.display.update()      
     FPS_CLOCK.tick(FPS)

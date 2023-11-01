@@ -91,6 +91,7 @@ health_ani = [pygame.image.load("heart0.png").convert_alpha(), pygame.image.load
 
 
 
+
  
  
 class Background(pygame.sprite.Sprite):
@@ -202,7 +203,7 @@ class Player(pygame.sprite.Sprite):
         self.cooldown = False
         self.immune = False
         self.special = False
-        self.experiance = 10
+        self.experiance = 11
         self.attack_frame = 0
         self.health = 1
         self.magic_cooldown = 1
@@ -210,10 +211,18 @@ class Player(pygame.sprite.Sprite):
         self.strenght = 0
         self.agility = 0
         self.intellect = 0
+        
  
         # Sound
         self.slash = 0
- 
+
+
+    
+
+
+
+    
+
  
     def move(self):
           if cursor.wait == 1: return
@@ -349,12 +358,8 @@ class Player(pygame.sprite.Sprite):
                 mmanager.playsoundtrack(soundtrack[2], -1, 0.1)
                 pygame.display.update()
 
-    def Strenght(self):
-            player.experiance = player.experiance - 10
-            self.strenght = self.strenght + 1
-            self.health = self.health+ 1
-       
-
+    
+ 
  
 class Bolt(pygame.sprite.Sprite):
       def __init__(self, x, y, d):
@@ -699,10 +704,16 @@ class EventHandler():
             self.enemy_generation = pygame.USEREVENT + 2
             self.enemy_generation2 = pygame.USEREVENT + 3
             self.enemy_generation3 = pygame.USEREVENT + 4
-            
+
             self.stage = 1
             self.money = 0
             self.world = 0
+            player.experiance = 11
+            self.experience = 11
+            self.health = 1
+            self.experience = player.experiance
+            self.exp = player.experiance
+            
              
  
             #Method 1 (Only for one level)
@@ -718,6 +729,31 @@ class EventHandler():
                         #self.stage_enemies[i][j] = (int(   ( j ** 2/2 ) / 2 )  * (i + 1) + 1 )
  
             print(self.stage_enemies)
+
+      
+
+ 
+       
+      
+      def MenyushkaPerdushkaEBalTebyaVUshko(self):
+            # Code for the Tkinter stage selection window
+            self.root = Tk()
+            self.root.geometry('200x170')
+             
+            button1 = Button(self.root, text = "Strenght", width = 18, height = 2,
+                            command = self.Strenght)
+              
+            button1.place(x = 40, y = 15)
+             
+            self.root.mainloop()
+
+      def Strenght(self):
+            self.health = self.health + 1
+            self.experience = self.experience - 10  # Уменьшение опыта на 10 после увеличения силы и здоровья
+
+            
+
+      
  
              
              
@@ -738,26 +774,7 @@ class EventHandler():
             button3.place(x = 40, y = 115)
              
             self.root.mainloop()
-
-      def Menyushka(self):
-            # Code for the Tkinter stage selection window
-            self.root = Tk()
-            self.root.geometry('200x170')
-             
-            button1 = Button(self.root, text = "Strenght", width = 18, height = 2,
-                            command = self.Strenght)
-            button2 = Button(self.root, text = "Agility", width = 18, height = 2,
-                            command = self.world2)
-            button3 = Button(self.root, text = "Intellect", width = 18, height = 2,
-                            command = self.world3)
-              
-            button1.place(x = 40, y = 15)
-            button2.place(x = 40, y = 65)
-            button3.place(x = 40, y = 115)
-             
-            self.root.mainloop()
-
-      
+       
       def world1(self):
             self.root.destroy()
             pygame.time.set_timer(self.enemy_generation, 2000)
@@ -834,8 +851,7 @@ class EventHandler():
             castle.hide = False
             background.bgimage = pygame.image.load("Background.png").convert_alpha()
             ground.image = pygame.image.load("Ground.png").convert_alpha()
- 
-       
+
  
  
 class HealthBar(pygame.sprite.Sprite):
@@ -889,6 +905,9 @@ class StatusBar(pygame.sprite.Sprite):
             self.surf = pygame.Surface((90, 66))
             self.rect = self.surf.get_rect(center = (500, 10))
             self.exp = player.experiance
+
+
+      
              
       def update_draw(self):
             # Create the text to be displayed
@@ -924,6 +943,7 @@ class Cursor(pygame.sprite.Sprite):
                 displaysurface.blit(cursor.image, cursor.rect)
           else:
                 pygame.mouse.set_visible(True)
+                
                  
  
 class PButton(pygame.sprite.Sprite):
@@ -960,6 +980,8 @@ ground_group.add(ground)
  
 castle = Castle()
 handler = EventHandler()
+strenght = Player()
+experiance = Player()
 health = HealthBar()
 stage_display = StageDisplay()
 status_bar = StatusBar()
@@ -1035,7 +1057,7 @@ while 1:
                     player.attack()
                     player.attacking = True     
             if event.key == pygame.K_e:
-                  handler.Menyushka()
+                  handler.MenyushkaPerdushkaEBalTebyaVUshko()
   
     # Player related functions
     player.update()

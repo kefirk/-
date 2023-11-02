@@ -159,7 +159,7 @@ class FireBall(pygame.sprite.Sprite):
             self.rect.y = player.pos.y
              
       def fire(self):
-            player.magic_cooldown = 0
+            player.magic_cooldown = 1
             # Runs while the fireball is still within the screen w/ extra margin
             if -10 < self.rect.x < 710:
                   if self.direction == "RIGHT":
@@ -192,6 +192,7 @@ class Player(pygame.sprite.Sprite):
         self.vel = vec(0,0)
         self.acc = vec(0,0)
         self.direction = "RIGHT"
+        
  
         # Movement 
         self.jumping = False
@@ -207,10 +208,11 @@ class Player(pygame.sprite.Sprite):
         self.attack_frame = 0
         self.health = 1
         self.magic_cooldown = 1
-        self.mana = 6
+        self.mana = 100
         self.strenght = 0
         self.agility = 0
         self.intellect = 0
+
         
  
         # Sound
@@ -367,17 +369,45 @@ class Player(pygame.sprite.Sprite):
              
             button1 = Button(self.root, text = "Strenght", width = 18, height = 2,
                             command = self.Strenght)
+            
+            button2 = Button(self.root, text = "Agility", width = 18, height = 2,
+                            command = self.Agility)
+            
+            button3= Button(self.root, text = "Intellect", width = 18, height = 2,
+                            command = self.Intellect)
+      
+      
               
             button1.place(x = 40, y = 15)
+            button2.place(x = 40, y = 65)
+            button3.place(x = 40, y = 115)
              
             self.root.mainloop()
 
     def Strenght(self):
             if self.experiance >= 10:
                   self.health = self.health + 1
+                  health.image = health_ani[self.health]
                   self.experiance = self.experiance - 10  
             else:
                   print("Не хватает EXP")
+
+
+    def Agility(self):
+          if self.experiance >=10:
+            
+            self.experiance = self.experiance - 10
+          else:
+                print("Не хватает EXP")
+
+    def Intellect(self):
+          if self.experiance >=10:
+            
+            self.experiance = self.experiance - 10
+          else:
+            print("Не хватает мозгов у тебя купить эту хрень")
+
+
 
     
  
@@ -988,6 +1018,8 @@ ground_group.add(ground)
 castle = Castle()
 handler = EventHandler()
 strenght = Player()
+agility = Player()
+intellect = Player()
 experiance = Player()
 health = HealthBar()
 stage_display = StageDisplay()
@@ -1044,8 +1076,8 @@ while 1:
         # Event handling for a range of different key presses    
         if event.type == pygame.KEYDOWN and cursor.wait == 0:
             if event.key == pygame.K_m and player.magic_cooldown == 1:
-                  if player.mana >= 6:
-                        player.mana -= 6
+                  if player.mana >= 60:
+                        player.mana -= 60
                         player.attacking = True
                         fireball = FireBall()
                         Fireballs.add(fireball)
@@ -1065,6 +1097,7 @@ while 1:
                     player.attacking = True     
             if event.key == pygame.K_e:
                   player.MenyushkaPerdushkaEBalTebyaVUshko()
+            
   
     # Player related functions
     player.update()

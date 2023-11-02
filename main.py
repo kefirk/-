@@ -272,6 +272,8 @@ class Player(pygame.sprite.Sprite):
  
     def update(self):
           if cursor.wait == 1: return
+
+
            
           # Return to base frame if at end of movement sequence 
           if self.move_frame > 6:
@@ -357,6 +359,25 @@ class Player(pygame.sprite.Sprite):
                 mmanager.stop()
                 mmanager.playsoundtrack(soundtrack[2], -1, 0.1)
                 pygame.display.update()
+
+    def MenyushkaPerdushkaEBalTebyaVUshko(self):
+            # Code for the Tkinter stage selection window
+            self.root = Tk()
+            self.root.geometry('200x170')
+             
+            button1 = Button(self.root, text = "Strenght", width = 18, height = 2,
+                            command = self.Strenght)
+              
+            button1.place(x = 40, y = 15)
+             
+            self.root.mainloop()
+
+    def Strenght(self):
+            if self.experiance >= 10:
+                  self.health = self.health + 1
+                  self.experiance = self.experiance - 10  
+            else:
+                  print("Не хватает EXP")
 
     
  
@@ -735,21 +756,7 @@ class EventHandler():
  
        
       
-      def MenyushkaPerdushkaEBalTebyaVUshko(self):
-            # Code for the Tkinter stage selection window
-            self.root = Tk()
-            self.root.geometry('200x170')
-             
-            button1 = Button(self.root, text = "Strenght", width = 18, height = 2,
-                            command = self.Strenght)
-              
-            button1.place(x = 40, y = 15)
-             
-            self.root.mainloop()
-
-      def Strenght(self):
-            self.health = self.health + 1
-            self.experience = self.experience - 10  # Уменьшение опыта на 10 после увеличения силы и здоровья
+   
 
             
 
@@ -1057,7 +1064,7 @@ while 1:
                     player.attack()
                     player.attacking = True     
             if event.key == pygame.K_e:
-                  handler.MenyushkaPerdushkaEBalTebyaVUshko()
+                  player.MenyushkaPerdushkaEBalTebyaVUshko()
   
     # Player related functions
     player.update()

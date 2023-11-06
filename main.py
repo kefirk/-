@@ -6,7 +6,6 @@ import time
 from tkinter import filedialog
 from tkinter import *
 import numpy
-from music_manager import MusicManager
 #import coin
  
 # freq, size, channel, buffsize
@@ -16,15 +15,7 @@ pygame.init()  # Begin pygame
  
  
  
-# Music and Sound
-soundtrack = ["background_village.wav", "battle_music.wav", "gameover.wav"]
-swordtrack = [pygame.mixer.Sound("sword1.wav"), pygame.mixer.Sound("sword2.wav")]
-fsound = pygame.mixer.Sound("fireball_sound.wav")
-hit = pygame.mixer.Sound("enemy_hit.wav")
- 
- 
-mmanager = MusicManager()
-mmanager.playsoundtrack(soundtrack[0], -1, 0.05)
+
  
  
 # Declaring variables to be used through the program
@@ -192,6 +183,7 @@ class Player(pygame.sprite.Sprite):
         self.vel = vec(0,0)
         self.acc = vec(0,0)
         self.direction = "RIGHT"
+        self.move_speed = 0.5
         
  
         # Movement 
@@ -206,7 +198,7 @@ class Player(pygame.sprite.Sprite):
         self.special = False
         self.experiance = 11
         self.attack_frame = 0
-        self.health = 1
+        self.health = 2
         self.magic_cooldown = 1
         self.mana = 100
         self.strenght = 0
@@ -250,7 +242,7 @@ class Player(pygame.sprite.Sprite):
           # Formulas to calculate velocity while accounting for friction
           self.acc.x += self.vel.x * FRIC
           self.vel += self.acc
-          self.pos += self.vel + 0.5 * self.acc  # Updates Position with new values
+          self.pos += self.vel + self.move_speed * self.acc  # Updates Position with new values
  
           # This causes character warping from one point of the screen to the other
           if self.pos.x > WIDTH:
@@ -309,7 +301,7 @@ class Player(pygame.sprite.Sprite):
                 self.attacking = False
  
           if self.attack_frame == 0:
-                mmanager.playsound(swordtrack[self.slash], 0.05)
+                
                  
                 self.slash += 1
                 if self.slash >= 2:
@@ -358,8 +350,7 @@ class Player(pygame.sprite.Sprite):
             if self.health <= 0:
             
                 self.kill()
-                mmanager.stop()
-                mmanager.playsoundtrack(soundtrack[2], -1, 0.1)
+                
                 pygame.display.update()
 
     def MenyushkaPerdushkaEBalTebyaVUshko(self):
@@ -367,13 +358,13 @@ class Player(pygame.sprite.Sprite):
             self.root = Tk()
             self.root.geometry('200x170')
              
-            button1 = Button(self.root, text = "Strenght", width = 18, height = 2,
+            button1 = Button(self.root, text = "Strenght(10XP)", width = 18, height = 2,
                             command = self.Strenght)
             
-            button2 = Button(self.root, text = "Agility", width = 18, height = 2,
+            button2 = Button(self.root, text = "Agility(10XP)", width = 18, height = 2,
                             command = self.Agility)
             
-            button3= Button(self.root, text = "Intellect", width = 18, height = 2,
+            button3= Button(self.root, text = "Intellect(10XP)", width = 18, height = 2,
                             command = self.Intellect)
       
       
@@ -394,8 +385,9 @@ class Player(pygame.sprite.Sprite):
 
 
     def Agility(self):
+          global ACC
           if self.experiance >=10:
-            
+            ACC +=0.1
             self.experiance = self.experiance - 10
           else:
                 print("Не хватает EXP")
@@ -460,7 +452,7 @@ class Enemy3(pygame.sprite.Sprite):
  
         self.direction = random.randint(0,1) # 0 for Right, 1 for Left
         self.vel.x = random.randint(6,12) / 2  # Randomised velocity of the generated enemy
-        self.mana = random.randint(1, 3)  # Randomised mana amount obtained upon    
+        self.mana = random.randint(2,2)  # Randomised mana amount obtained upon    
  
         # Sets the intial position of the enemy
         if self.direction == 0:
@@ -498,7 +490,6 @@ class Enemy3(pygame.sprite.Sprite):
             # Activates upon either of the two expressions being true
             if hits and player.attacking == True or f_hits:
                   self.kill()
-                  mmanager.playsound(hit, 0.05)
                   handler.dead_enemy_count += 1
                    
                   if player.mana < 100: player.mana += self.mana # Release mana
@@ -628,7 +619,6 @@ class Enemy2(pygame.sprite.Sprite):
             # Activates upon either of the two expressions being true
             if hits and player.attacking == True or f_hits:
                   self.kill()
-                  mmanager.playsound(hit, 0.05)
                   handler.dead_enemy_count += 1
                    
                   if player.mana < 100: player.mana += self.mana # Release mana
@@ -704,7 +694,7 @@ class Enemy(pygame.sprite.Sprite):
             # Activates upon either of the two expressions being true
             if hits and player.attacking == True or f_hits:
                   self.kill()
-                  mmanager.playsound(hit, 0.05)
+                  
                   handler.dead_enemy_count += 1
                    
                   if player.mana < 100: player.mana += self.mana # Release mana
@@ -820,7 +810,7 @@ class EventHandler():
             castle.hide = True
             self.battle = True
              
-            mmanager.playsoundtrack(soundtrack[1], -1, 0.05)
+            
              
  
       def world2(self):
@@ -833,7 +823,7 @@ class EventHandler():
             castle.hide = True
             self.battle = True
  
-            mmanager.playsoundtrack(soundtrack[1], -1, 0.05)
+            
   
  
       def world3(self):
@@ -846,7 +836,7 @@ class EventHandler():
             castle.hide = True
             self.battle = True
  
-            mmanager.playsoundtrack(soundtrack[1], -1, 0.05)
+      
              
   
       def next_stage(self):  # Code for when the next stage is clicked            
@@ -1081,7 +1071,7 @@ while 1:
                         player.attacking = True
                         fireball = FireBall()
                         Fireballs.add(fireball)
-                        mmanager.playsound(fsound, 0.3)
+                        
             if event.key == pygame.K_n:
                   if handler.battle == True and len(Enemies) == 0:
                         handler.next_stage()

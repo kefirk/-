@@ -402,7 +402,7 @@ class Player(pygame.sprite.Sprite):
 
     def Intellect(self):
           if self.experiance >=10:
-            
+            self.mana = self.mana + 10
             self.experiance = self.experiance - 10
           else:
             print("Не хватает мозгов у тебя купить эту хрень")
@@ -769,7 +769,7 @@ class EventHandler():
  
             #Method 1 (Only for one level)
             self.stage_enemies = []
-            for x in range(1, 21):
+            for x in range(1, 200):
                   self.stage_enemies.append(int((x ** 2 / 2) + 1))
  
             #Method 2 (Both levels)
@@ -1142,4 +1142,4 @@ while 1:
           entity.move()
           entity.render()
     pygame.display.update()      
-    FPS_CLOCK.tick(FPS)
+    FPS_CLOCK.tick(FPS) 

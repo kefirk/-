@@ -6,6 +6,7 @@ import time
 from tkinter import filedialog
 from tkinter import *
 import numpy
+import button
 #import coin
  
 # freq, size, channel, buffsize
@@ -16,7 +17,7 @@ pygame.init()  # Begin pygame
  
  
 
- 
+
  
 # Declaring variables to be used through the program
 vec = pygame.math.Vector2
@@ -31,7 +32,8 @@ COUNT = 0
 # Create the display
 #displaysurface = pygame.display.set_mode((WIDTH, HEIGHT), flags, 32)
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Game")
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Main Menu")
  
  
 # light shade of the button 
@@ -44,7 +46,11 @@ headingfont = pygame.font.SysFont("Verdana", 40)
 regularfont = pygame.font.SysFont('Corbel',25)
 smallerfont = pygame.font.SysFont('Corbel',16) 
 text = regularfont.render('LOAD' , True , color_light)
- 
+game_paused = False
+menu_state = "main"
+font = pygame.font.SysFont("arialblack", 40)
+TEXT_COL = (100,100,100)
+BG = pygame.image.load("assets/Background.png")
  
  
 # Run animation for the RIGHT
@@ -82,6 +88,55 @@ health_ani = [pygame.image.load("heart0.png").convert_alpha(), pygame.image.load
 
 
 
+resume_img = pygame.image.load("button_resume.png").convert_alpha()
+quit_img = pygame.image.load("button_quit.png").convert_alpha()
+keys_img = pygame.image.load('button_keys.png').convert_alpha()
+back_img = pygame.image.load('button_back.png').convert_alpha()
+
+#create button instances
+resume_button = button.Button(304, 125, resume_img, 1)
+quit_button = button.Button(336, 375, quit_img, 1)
+keys_button = button.Button(246, 325, keys_img, 1)
+back_button = button.Button(332, 450, back_img, 1)
+
+def draw_text(text, font, text_col, x, y):
+  img = font.render(text, True, text_col)
+  screen.blit(img, (x, y))
+
+#game loop
+run = True
+while run:
+
+  screen.blit(BG, (0, 0))
+
+  #check if game is paused
+  if game_paused == True:
+    #check menu state
+    if menu_state == "main":
+      #draw pause screen buttons
+      if resume_button.draw(screen):
+        game_paused = False
+      if quit_button.draw(screen):
+        run = False
+    #check if the options menu is open
+    if menu_state == "options":
+      #draw the different options buttons
+      if keys_button.draw(screen):
+        print("Change Key Bindings")
+      if back_button.draw(screen):
+        menu_state = "main"
+  else:
+    draw_text("SPACE что бы начать кончать", font, TEXT_COL, 0, 0)
+
+  #event handler
+  for event in pygame.event.get():
+    if event.type == pygame.KEYDOWN:
+      if event.key == pygame.K_SPACE:
+        run = False
+    if event.type == pygame.QUIT:
+      run = False
+
+  pygame.display.update()
 
  
  
@@ -198,7 +253,7 @@ class Player(pygame.sprite.Sprite):
         self.special = False
         self.experiance = 11
         self.attack_frame = 0
-        self.health = 2
+        self.health = 1
         self.magic_cooldown = 1
         self.mana = 100
         self.strenght = 0
@@ -212,7 +267,6 @@ class Player(pygame.sprite.Sprite):
 
 
     
-
 
 
     

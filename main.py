@@ -127,6 +127,7 @@ while run:
         menu_state = "main"
   else:
     draw_text("SPACE что бы начать кончать", font, TEXT_COL, 0, 0)
+    
 
   #event handler
   for event in pygame.event.get():
@@ -138,7 +139,7 @@ while run:
 
   pygame.display.update()
 
- 
+
  
 class Background(pygame.sprite.Sprite):
       def __init__(self):
@@ -224,9 +225,11 @@ class FireBall(pygame.sprite.Sprite):
                   player.magic_cooldown = 1
                   player.attacking = False
              
- 
+
+     
  
 class Player(pygame.sprite.Sprite):
+    
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("Player_Sprite_R.png").convert_alpha()
@@ -259,18 +262,14 @@ class Player(pygame.sprite.Sprite):
         self.strenght = 0
         self.agility = 0
         self.intellect = 0
-
-        
+        self.gover = False
+        self.game_pause = False
  
         # Sound
         self.slash = 0
 
 
     
-
-
-    
-
  
     def move(self):
           if cursor.wait == 1: return
@@ -402,10 +401,17 @@ class Player(pygame.sprite.Sprite):
             health.image = health_ani[self.health]
              
             if self.health <= 0:
-            
-                self.kill()
+
+                self.gover=True
                 
-                pygame.display.update()
+
+            while self.gover:
+                 self.game_pause = True
+                 screen.blit(BG, (0, 0))
+                 pygame.display.update()
+
+                 
+                  
 
     def MenyushkaPerdushkaEBalTebyaVUshko(self):
             # Code for the Tkinter stage selection window
@@ -1081,7 +1087,7 @@ while 1:
     for event in pygame.event.get():
         if event.type == hit_cooldown:
             player.cooldown = False
-        # Will run when the close window button is clicked    
+        # Will run when the close window button is clicked
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
